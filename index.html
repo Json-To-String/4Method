@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>
+	<link type="text/css" rel="stylesheet" href="css/app.css"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<script
+	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js">
+	</script>
+
+	<script>
+	// function figureGetter(data,strIndic) {
+	// if (data.includes(strIndic)) {
+	//
+	// }
+	// }
+
+	//// Run Python on function call
+	function pytoJavaScript(pyscript) {
+		var spawn = require('child_process').spawn
+		var process = spawn('python',[pyscript.toString()])
+		process.stdout.on('data', function(data) {
+			console.log('pyscript:',pyscript)
+			document.getElementById('jsoutput').innerHTML = data.toString()
+
+			//// Seebeck case
+			if (pyscript.includes('SeebeckApp.py')) {
+				//// Procedure for Quasi
+				if (data.includes('QuasiSteadyFig:')){
+					var qsFigIndex = data.indexOf('QuasiSteadyFig:')
+					var qsFigStr = data.toString().slice(qsFigIndex)
+					var qsFigLoc = qsFigStr.slice(qsFigStr.indexOf('images',qsFigStr.indexOf(':')),qsFigStr.indexOf('SteadyStateFig:'))
+					document.getElementById('imgoutput1').src = qsFigLoc
+					// console.log('qsFigLoc:',qsFigLoc)
+
+				}
+				//// Procedure for Steady
+				if (data.includes('SteadyStateFig:')){
+					var ssFigIndex = data.indexOf('SteadyStateFig:')
+					var ssFigStr = data.toString().slice(ssFigIndex)
+					var ssFigLoc = ssFigStr.slice(ssFigStr.indexOf('images',ssFigStr.indexOf(':')))
+					document.getElementById('imgoutput2').src = ssFigLoc
+					// console.log(ssFigIndex)
+					// console.log('ssFigLoc:',ssFigLoc)
+
+				}
+
+			}
+
+			// Hall case
+			else if (pyscript.includes('HallApp.py')) {
+				console.log('Hall image')
+				// if (data.includes('Hallfig:')) {
+					var hFigIndex = data.indexOf('NISTHallFig:')
+					var hdFigStr = data.toString() //.slice(hFigIndex)
+					console.log('hFigIndex:',hFigIndex)
+					console.log('hdFigStr:',hdFigStr)
+					// var hdFigLoc = hdFigStr.slice(hdFigStr.indexOf('images',hdFigStr.indexOf(':')))
+					// console.log('hdFigLoc:',hdFigLoc)
+					// document.getElementById('imgoutput1').src = hdFigLoc
+				}
+
+			// Resistivity case
+			else if (pyscript.includes('ResistivityApp.py')) {
+				console.log('Resistivity image')
+			}
+
+			else if (pyscript.includes('NernstApp.py')) {
+				console.log('Nernst image')
+			}
+
+		})
+	}
+	</script>
+
+
+</head>
+<body>
+	<nav>
+		<div class="nav-wrapper teal darken-2 row">
+			<div class="col s6 offset-s1"><span class="brand-logo" color="white">Method of Four Coefficients</span></div>
+		</div>
+	</nav>
+  	<div class="row">
+		<div class="col s2 teal lighten-3 full-width">
+			<div class="section">
+        <button onclick="pytoJavaScript('SeebeckApp.py')" <a class="btn waves-effect waves-light"><font color="white">Seebeck</font></a>
+      </div>
+			<div class="section">
+        <button onclick="pytoJavaScript('HallApp.py')" <a class="btn waves-effect waves-light"><font color="white">Hall</font></a>
+			</div>
+			<div class="section">
+        <button onclick="pytoJavaScript('Resistivity.py')" <a class="btn waves-effect waves-light"><font color="white">Resistivity</font></a>
+			</div>
+			<div class="section">
+        <button onclick="pytoJavaScript('Nernst.py')" <a class="btn waves-effect waves-light"><font color="white">Nernst</font></a>
+			</div>
+			<div class="section">
+				<div class="switch">
+					<label>
+						<font color="white">Graphs</font>
+					<input type="checkbox">
+					<span class="lever"></span>
+					</label>
+				</div>
+			</div>
+			<div class="section">
+				<div class="switch">
+					<label>
+						<font color="white">Data</font>
+					<input type="checkbox">
+					<span class="lever"></span>
+					</label>
+				</div>
+			</div>
+			<form class="section" action="#">
+				<div class="file-field input-field">
+					<div class="btn">
+						<span>Folder</span>
+						<input type="file" webkitdirectory directory/>
+					</div>
+					<div class="file-path-wrapper" color="white">
+						<input class="file-path validate" type="text">
+					</div>
+				</div>
+			</form>
+		</div>
+  <div class="col s10 cyan darken-4 full-width">
+			<div class="row">
+			<div class="col s12">
+				<div class="card">
+					<div class="card-image">
+						<!-- <need path to img files here as vars from js> -->
+						<img id = 'imgoutput1' class="materialboxed" width="10"src="images/seebecksample.png">
+					</div>
+					<div class="card-image">
+						<img id = 'imgoutput2' class="materialboxed" width="10" src="images/hallsample.png">
+					</div>
+					<div class="card-image">
+						<img id = 'imgoutput3' class="materialboxed" width="10" src="images/ressample.png">
+					</div>
+					<div class="card-image">
+						<img id = 'imgoutput4' class="materialboxed" width="10" src="images/nernstsample.png">
+					</div>
+				</div>
+			</div>
+			<div class="col s12">
+				<div class="card horizontal">
+					<div class="card-stacked">
+						<div class="card-content scroll-box">
+							<pre id='jsoutput' class=""></pre>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script type="text/javascript" src="./js/materialize.min.js"></script>
+	<script type="text/javascript" src="./js/app.js"></script>
+	</body>
+</html>
